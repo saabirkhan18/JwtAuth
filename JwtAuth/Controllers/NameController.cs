@@ -15,10 +15,11 @@ namespace JwtAuth.Controllers
     public class NameController : ControllerBase
     {
         private readonly IjwtAuthenticationManager jwtAuthenticationManager;
-
-        public NameController(IjwtAuthenticationManager jwtAuthenticationManager)
+        private readonly ITokenRefresher tokenRefresher;
+        public NameController(IjwtAuthenticationManager jwtAuthenticationManager, ITokenRefresher tokenRefresher)
         {
             this.jwtAuthenticationManager = jwtAuthenticationManager;
+            this.tokenRefresher = tokenRefresher;
         }
         // GET: api/<NameValuesController>
         [HttpGet]
@@ -40,7 +41,22 @@ namespace JwtAuth.Controllers
             {
                 return Ok(token);
             }
+        }
 
+
+
+        [HttpPost("refresh")]
+        public IActionResult Refresh([FromBody] RefreshTokenCred refreshTokenCred)
+        {
+            var token = tokenRefresher.Refresh(refreshTokenCred);
+            if (token == null)
+            {
+                return Unauthorized();
+            }
+            else
+            {
+                return Ok(token);
+            }
         }
     }
 }

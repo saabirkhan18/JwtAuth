@@ -49,7 +49,10 @@ namespace JwtAuth
                 };
             });
 
-            services.AddSingleton<IjwtAuthenticationManager>(new JwtAuthenticationManager(Key));
+            services.AddSingleton<ITokenRefresher>(x => new TokenRefresher(Encoding.ASCII.GetBytes(Key), x.GetService<IjwtAuthenticationManager>()));
+            services.AddSingleton<IRefreshTokenGenerator, RefreshTokenGenerator>();
+            services.AddSingleton<IjwtAuthenticationManager>(x => new JwtAuthenticationManager(Key, x.GetService<IRefreshTokenGenerator>()));
+            //services.AddSingleton<IjwtAuthenticationManager>(new JwtAuthenticationManager(Key));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "JwtAuth", Version = "v1" });

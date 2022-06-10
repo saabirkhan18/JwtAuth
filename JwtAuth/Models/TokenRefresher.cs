@@ -36,7 +36,7 @@ namespace JwtAuth.Models
                 },
                 out validateToken);
             var jwtToken = validateToken as JwtSecurityToken;
-            if (jwtToken == null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256Signature))
+            if (jwtToken == null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new SecurityTokenException("Invalid jwt token");
             }

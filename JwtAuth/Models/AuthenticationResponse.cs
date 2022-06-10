@@ -9,5 +9,6 @@ namespace JwtAuth.Models
     {
         public string jwt_token { set; get; }
         public string refresh_token { set; get; }
+        public string message { set; get; }
     }
 }

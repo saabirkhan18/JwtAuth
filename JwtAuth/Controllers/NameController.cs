@@ -35,10 +35,12 @@ namespace JwtAuth.Controllers
             var token = jwtAuthenticationManager.Authenticate(userCred.username, userCred.password);
             if (token == null)
             {
+                token.message = "unauthorized";
                 return Unauthorized();
             }
             else
             {
+                token.message = "success";
                 return Ok(token);
             }
         }
@@ -48,14 +50,23 @@ namespace JwtAuth.Controllers
         [HttpPost("refresh")]
         public IActionResult Refresh([FromBody] RefreshTokenCred refreshTokenCred)
         {
-            var token = tokenRefresher.Refresh(refreshTokenCred);
-            if (token == null)
+            try
             {
-                return Unauthorized();
+                var token = tokenRefresher.Refresh(refreshTokenCred);
+                if (token == null)
+                {
+                    token.message = "unauthorized";
+                    return Unauthorized(new AuthenticationResponse { jwt_token = "invalid jwt token", refresh_token = "invalid refresh token" });
+                }
+                else
+                {
+                    token.message = "success";
+                    return Ok(token);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return Ok(token);
+                return Unauthorized(new AuthenticationResponse { jwt_token = "invalid jwt token", refresh_token = "invalid refresh token", message = ex.ToString() });
             }
         }
     }

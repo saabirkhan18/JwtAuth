@@ -13,23 +13,24 @@ namespace JwtAuth.Models
     public interface IjwtAuthenticationManager
     {
         public AuthenticationResponse Authenticate(string username, string password);
-        public IDictionary<string, string> UserRefreshToken { get; }
+        public IDictionary<string, string> UserRefreshToken { set; get; }
         public AuthenticationResponse Authenticate(string username, Claim[] claims);
     }
     public class JwtAuthenticationManager : IjwtAuthenticationManager
     {
         private readonly string Key;
         private readonly IRefreshTokenGenerator refreshTokenGenerator;
-        public IDictionary<string, string> UserRefreshToken = new Dictionary<string, string>();
+        public IDictionary<string, string> UserRefreshToken { set; get; }
 
 
         public JwtAuthenticationManager(string Key, IRefreshTokenGenerator refreshTokenGenerator)
         {
             this.Key = Key;
             this.refreshTokenGenerator = refreshTokenGenerator;
+            UserRefreshToken = new Dictionary<string, string>();
         }
 
-        IDictionary<string, string> IjwtAuthenticationManager.UserRefreshToken => throw new NotImplementedException();
+        //IDictionary<string, string> IjwtAuthenticationManager.UserRefreshToken => throw new NotImplementedException();
 
         public AuthenticationResponse Authenticate(string username, Claim[] claims)
         {
@@ -51,7 +52,7 @@ namespace JwtAuth.Models
             {
                 UserRefreshToken.Add(username, refreshToken);
             }
-            UserRefreshToken.Add(username, refreshToken);
+            //UserRefreshToken.Add(username, refreshToken);
 
             return new AuthenticationResponse()
             {
